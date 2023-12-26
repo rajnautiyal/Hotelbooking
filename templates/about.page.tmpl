@@ -1,0 +1,15 @@
+{{template "base" .}}
+{{define "content"}}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>This is my About Page</h1>      
+            <h2>are we getting from the cache</h2>    
+            <h2>not getting value from from the cache</h2>   
+            <p>This came from my template {{index .StringMap "test"}}</p>
+            <p>your remote ip address is  {{index .StringMap "remoteIp"}}</p>
+        
+        </div>
+    </div>
+</div>    
+{{end}}
