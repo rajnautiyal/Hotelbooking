@@ -2,7 +2,6 @@ package render
 
 import (
 	"bytes"
-	"fmt"
 
 	"log"
 	"net/http"
@@ -23,7 +22,6 @@ func NewTemplate(config *config.AppConfig) {
 
 func AddDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
 	templateData.CSRFToken = nosurf.Token(request)
-	fmt.Println("adding SSFRtomeoke", templateData.CSRFToken)
 	return templateData
 }
 func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.TemplateData, request *http.Request) {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/rajnautiyal/bookings/internal/config"
+	"github.com/rajnautiyal/bookings/internal/forms"
 	"github.com/rajnautiyal/bookings/internal/models"
 	"github.com/rajnautiyal/bookings/internal/render"
 )
@@ -46,7 +47,40 @@ func (m *Repository) About(writer http.ResponseWriter, request *http.Request) {
 }
 
 func (m *Repository) Reservation(writer http.ResponseWriter, request *http.Request) {
-	render.RenderTemplate(writer, "make-reservation.page.tmpl", &models.TemplateData{}, request)
+	render.RenderTemplate(writer, "make-reservation.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	}, request)
+}
+
+// PostReservation handles the posting of a reservation form
+func (m *Repository) PostReservation(writer http.ResponseWriter, request *http.Request) {
+	err := request.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	reservation := models.Reservation{
+		FirstName: request.Form.Get("first_name"),
+		LastName:  request.Form.Get("last_name"),
+		Email:     request.Form.Get("email"),
+		Phone:     request.Form.Get("phone"),
+	}
+
+	form := forms.New(request.PostForm)
+
+	form.Has("first_name", request)
+
+	if !form.Valid() {
+
+		data := make(map[string]interface{})
+		data["reservation"] = reservation
+		render.RenderTemplate(writer, "make-reservation.page.tmpl", &models.TemplateData{
+			Form: form,
+			Data: data,
+		}, request)
+		return
+	}
 }
 
 func (m *Repository) Majors(writer http.ResponseWriter, request *http.Request) {
