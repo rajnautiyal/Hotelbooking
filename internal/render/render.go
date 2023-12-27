@@ -2,14 +2,16 @@ package render
 
 import (
 	"bytes"
+	"fmt"
 
 	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
 
-	"github.com/rajnautiyal/bookings/pkg/config"
-	"github.com/rajnautiyal/bookings/pkg/models"
+	"github.com/justinas/nosurf"
+	"github.com/rajnautiyal/bookings/internal/config"
+	"github.com/rajnautiyal/bookings/internal/models"
 )
 
 var app *config.AppConfig
@@ -19,7 +21,13 @@ func NewTemplate(config *config.AppConfig) {
 	app = config
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.TemplateData) {
+func AddDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
+	templateData.CSRFToken = nosurf.Token(request)
+	fmt.Println("adding SSFRtomeoke", templateData.CSRFToken)
+	return templateData
+}
+func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.TemplateData, request *http.Request) {
+
 	var tc map[string]*template.Template
 	//create the template  cache
 	if app.UseCache {
@@ -34,6 +42,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.Tem
 	}
 
 	buf := new(bytes.Buffer)
+	templateData = AddDefaultData(templateData, request)
 	_ = t.Execute(buf, templateData)
 
 	_, err := buf.WriteTo(w)
