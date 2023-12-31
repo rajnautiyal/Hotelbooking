@@ -27,7 +27,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(NoSruf)
 	mux.Use(LoadSession)
 
-	//loading the url
+	//loading the url for
+
 	mux.Get("/", http.HandlerFunc(handler.Repo.Home))
 	mux.Get("/home", http.HandlerFunc(handler.Repo.Home))
 	mux.Get("/about", http.HandlerFunc(handler.Repo.About))
@@ -39,6 +40,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/contact", http.HandlerFunc(handler.Repo.Contact))
 	mux.Get("/make-reservation", http.HandlerFunc(handler.Repo.Reservation))
 	mux.Post("/make-reservation", http.HandlerFunc(handler.Repo.PostReservation))
+	mux.Get("/reservation-summary", http.HandlerFunc(handler.Repo.ReservationSummary))
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

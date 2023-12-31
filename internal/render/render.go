@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"fmt"
 
 	"log"
 	"net/http"
@@ -22,8 +23,12 @@ func NewTemplate(config *config.AppConfig) {
 
 func AddDefaultData(templateData *models.TemplateData, request *http.Request) *models.TemplateData {
 	templateData.CSRFToken = nosurf.Token(request)
+	templateData.Flash = app.Session.PopString(request.Context(), "flash")
+	templateData.Error = app.Session.PopString(request.Context(), "error")
+	templateData.WARN = app.Session.PopString(request.Context(), "warn")
 	return templateData
 }
+
 func RenderTemplate(w http.ResponseWriter, tmpl string, templateData *models.TemplateData, request *http.Request) {
 
 	var tc map[string]*template.Template
@@ -53,9 +58,11 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	//myCache := make(map[string]*template.Template)
 	myCache := map[string]*template.Template{}
 	//get all the file ends with page.tmpl
+
 	pages, err := filepath.Glob("./templates/*page.tmpl")
 
 	if err != nil {
+		fmt.Println("pages not found")
 		return myCache, err
 	}
 
@@ -64,6 +71,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		ts, err := template.New(name).ParseFiles(page)
 
 		if err != nil {
+			fmt.Println("pages not found")
 			return myCache, err
 		}
 		matches, err := filepath.Glob("./templates/*layout.tmpl")
