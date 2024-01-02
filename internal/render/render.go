@@ -10,6 +10,7 @@ import (
 	"text/template"
 
 	"github.com/justinas/nosurf"
+
 	"github.com/rajnautiyal/bookings/internal/config"
 	"github.com/rajnautiyal/bookings/internal/models"
 )
